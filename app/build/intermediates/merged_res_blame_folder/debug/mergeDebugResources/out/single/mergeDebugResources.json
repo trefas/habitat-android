@@ -1,0 +1,22 @@
+[
+    {
+        "merged": "com.habitat.android.app-debug-28:/mipmap-anydpi-v26_ic_launcher_round.xml.flat",
+        "source": "com.habitat.android.app-main-30:/mipmap-anydpi-v26/ic_launcher_round.xml"
+    },
+    {
+        "merged": "com.habitat.android.app-debug-28:/drawable_ic_launcher_foreground.xml.flat",
+        "source": "com.habitat.android.app-main-30:/drawable/ic_launcher_foreground.xml"
+    },
+    {
+        "merged": "com.habitat.android.app-debug-28:/mipmap-anydpi-v26_ic_launcher.xml.flat",
+        "source": "com.habitat.android.app-main-30:/mipmap-anydpi-v26/ic_launcher.xml"
+    },
+    {
+        "merged": "com.habitat.android.app-debug-28:/layout_dialog_settings.xml.flat",
+        "source": "com.habitat.android.app-main-30:/layout/dialog_settings.xml"
+    },
+    {
+        "merged": "com.habitat.android.app-debug-28:/layout_activity_main.xml.flat",
+        "source": "com.habitat.android.app-main-30:/layout/activity_main.xml"
+    }
+]

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Habitat Android</string>
+    <string name="btn_refresh">Обновить</string>
+    <string name="btn_settings">Настроить</string>
+    <string name="dialog_btn_cancel">Отмена</string>
+    <string name="dialog_btn_save">Сохранить</string>
+    <string name="dialog_ip_hint">IP-адрес сервера</string>
+    <string name="dialog_port_hint">Порт</string>
+    <string name="dialog_settings_title">Настройки подключения</string>
+    <string name="status_connected">Подключено</string>
+    <string name="status_connecting">Подключение...</string>
+    <string name="status_disconnected">Отключено</string>
+    <string name="toast_connection_failed">Не удалось подключиться</string>
+    <string name="toast_connection_success">Успешное подключение!</string>
+    <string name="toast_settings_saved">Настройки сохранены</string>
+</resources>
