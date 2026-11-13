@@ -92,7 +92,7 @@ MERGED from [androidx.startup:startup-runtime:1.1.1] /home/trefas/.gradle/caches
 	android:allowBackup
 		ADDED from /home/trefas/Проекты/kotlin/habitat-android/app/src/main/AndroidManifest.xml:8:9-35
 	android:theme
-		ADDED from /home/trefas/Проекты/kotlin/habitat-android/app/src/main/AndroidManifest.xml:13:9-52
+		ADDED from /home/trefas/Проекты/kotlin/habitat-android/app/src/main/AndroidManifest.xml:13:9-48
 activity#com.habitat.android.MainActivity
 ADDED from /home/trefas/Проекты/kotlin/habitat-android/app/src/main/AndroidManifest.xml:14:9-21:20
 	android:exported

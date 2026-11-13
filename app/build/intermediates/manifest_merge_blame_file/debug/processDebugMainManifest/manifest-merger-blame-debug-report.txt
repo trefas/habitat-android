@@ -43,8 +43,8 @@
 28        android:supportsRtl="true"
 28-->/home/trefas/Проекты/kotlin/habitat-android/app/src/main/AndroidManifest.xml:12:9-35
 29        android:testOnly="true"
-30        android:theme="@style/Theme.HabitatAndroid" >
-30-->/home/trefas/Проекты/kotlin/habitat-android/app/src/main/AndroidManifest.xml:13:9-52
+30        android:theme="@style/Theme.Catppuccin" >
+30-->/home/trefas/Проекты/kotlin/habitat-android/app/src/main/AndroidManifest.xml:13:9-48
 31        <activity
 31-->/home/trefas/Проекты/kotlin/habitat-android/app/src/main/AndroidManifest.xml:14:9-21:20
 32            android:name="com.habitat.android.MainActivity"

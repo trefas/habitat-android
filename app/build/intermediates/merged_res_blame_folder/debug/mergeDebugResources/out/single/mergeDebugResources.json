@@ -1,22 +1,118 @@
 [
     {
-        "merged": "com.habitat.android.app-debug-28:/mipmap-anydpi-v26_ic_launcher_round.xml.flat",
-        "source": "com.habitat.android.app-main-30:/mipmap-anydpi-v26/ic_launcher_round.xml"
+        "merged": "/home/trefas/.gradle/daemon/8.13/com.habitat.android.app-debug-28:/mipmap-xxxhdpi_ic_launcher_foreground.webp.flat",
+        "source": "/home/trefas/.gradle/daemon/8.13/com.habitat.android.app-main-30:/mipmap-xxxhdpi/ic_launcher_foreground.webp"
     },
     {
-        "merged": "com.habitat.android.app-debug-28:/drawable_ic_launcher_foreground.xml.flat",
-        "source": "com.habitat.android.app-main-30:/drawable/ic_launcher_foreground.xml"
+        "merged": "com.habitat.android.app-debug-28:/font_montserrat_regular.ttf.flat",
+        "source": "com.habitat.android.app-main-30:/font/montserrat_regular.ttf"
     },
     {
-        "merged": "com.habitat.android.app-debug-28:/mipmap-anydpi-v26_ic_launcher.xml.flat",
-        "source": "com.habitat.android.app-main-30:/mipmap-anydpi-v26/ic_launcher.xml"
+        "merged": "/home/trefas/.gradle/daemon/8.13/com.habitat.android.app-debug-28:/drawable_ic_launcher_foreground.xml.flat",
+        "source": "/home/trefas/.gradle/daemon/8.13/com.habitat.android.app-main-30:/drawable/ic_launcher_foreground.xml"
     },
     {
-        "merged": "com.habitat.android.app-debug-28:/layout_dialog_settings.xml.flat",
-        "source": "com.habitat.android.app-main-30:/layout/dialog_settings.xml"
+        "merged": "/home/trefas/.gradle/daemon/8.13/com.habitat.android.app-debug-28:/mipmap-hdpi_ic_launcher_round.webp.flat",
+        "source": "/home/trefas/.gradle/daemon/8.13/com.habitat.android.app-main-30:/mipmap-hdpi/ic_launcher_round.webp"
     },
     {
-        "merged": "com.habitat.android.app-debug-28:/layout_activity_main.xml.flat",
-        "source": "com.habitat.android.app-main-30:/layout/activity_main.xml"
+        "merged": "/home/trefas/.gradle/daemon/8.13/com.habitat.android.app-debug-28:/mipmap-anydpi-v26_ic_launcher.xml.flat",
+        "source": "/home/trefas/.gradle/daemon/8.13/com.habitat.android.app-main-30:/mipmap-anydpi-v26/ic_launcher.xml"
+    },
+    {
+        "merged": "com.habitat.android.app-debug-28:/font_montserrat.xml.flat",
+        "source": "com.habitat.android.app-main-30:/font/montserrat.xml"
+    },
+    {
+        "merged": "/home/trefas/.gradle/daemon/8.13/com.habitat.android.app-debug-28:/mipmap-xhdpi_ic_launcher_foreground.webp.flat",
+        "source": "/home/trefas/.gradle/daemon/8.13/com.habitat.android.app-main-30:/mipmap-xhdpi/ic_launcher_foreground.webp"
+    },
+    {
+        "merged": "/home/trefas/.gradle/daemon/8.13/com.habitat.android.app-debug-28:/mipmap-xhdpi_ic_launcher.webp.flat",
+        "source": "/home/trefas/.gradle/daemon/8.13/com.habitat.android.app-main-30:/mipmap-xhdpi/ic_launcher.webp"
+    },
+    {
+        "merged": "/home/trefas/.gradle/daemon/8.13/com.habitat.android.app-debug-28:/mipmap-mdpi_ic_launcher_monochrome.webp.flat",
+        "source": "/home/trefas/.gradle/daemon/8.13/com.habitat.android.app-main-30:/mipmap-mdpi/ic_launcher_monochrome.webp"
+    },
+    {
+        "merged": "/home/trefas/.gradle/daemon/8.13/com.habitat.android.app-debug-28:/mipmap-hdpi_ic_launcher_monochrome.webp.flat",
+        "source": "/home/trefas/.gradle/daemon/8.13/com.habitat.android.app-main-30:/mipmap-hdpi/ic_launcher_monochrome.webp"
+    },
+    {
+        "merged": "/home/trefas/.gradle/daemon/8.13/com.habitat.android.app-debug-28:/mipmap-xhdpi_ic_launcher_round.webp.flat",
+        "source": "/home/trefas/.gradle/daemon/8.13/com.habitat.android.app-main-30:/mipmap-xhdpi/ic_launcher_round.webp"
+    },
+    {
+        "merged": "com.habitat.android.app-debug-28:/font_montserrat_bold.ttf.flat",
+        "source": "com.habitat.android.app-main-30:/font/montserrat_bold.ttf"
+    },
+    {
+        "merged": "com.habitat.android.app-debug-28:/font_montserrat_medium.ttf.flat",
+        "source": "com.habitat.android.app-main-30:/font/montserrat_medium.ttf"
+    },
+    {
+        "merged": "/home/trefas/.gradle/daemon/8.13/com.habitat.android.app-debug-28:/mipmap-xhdpi_ic_launcher_monochrome.webp.flat",
+        "source": "/home/trefas/.gradle/daemon/8.13/com.habitat.android.app-main-30:/mipmap-xhdpi/ic_launcher_monochrome.webp"
+    },
+    {
+        "merged": "/home/trefas/.gradle/daemon/8.13/com.habitat.android.app-debug-28:/layout_activity_main.xml.flat",
+        "source": "/home/trefas/.gradle/daemon/8.13/com.habitat.android.app-main-30:/layout/activity_main.xml"
+    },
+    {
+        "merged": "/home/trefas/.gradle/daemon/8.13/com.habitat.android.app-debug-28:/mipmap-xxxhdpi_ic_launcher_round.webp.flat",
+        "source": "/home/trefas/.gradle/daemon/8.13/com.habitat.android.app-main-30:/mipmap-xxxhdpi/ic_launcher_round.webp"
+    },
+    {
+        "merged": "/home/trefas/.gradle/daemon/8.13/com.habitat.android.app-debug-28:/mipmap-xxxhdpi_ic_launcher_monochrome.webp.flat",
+        "source": "/home/trefas/.gradle/daemon/8.13/com.habitat.android.app-main-30:/mipmap-xxxhdpi/ic_launcher_monochrome.webp"
+    },
+    {
+        "merged": "/home/trefas/.gradle/daemon/8.13/com.habitat.android.app-debug-28:/mipmap-xxxhdpi_ic_launcher.webp.flat",
+        "source": "/home/trefas/.gradle/daemon/8.13/com.habitat.android.app-main-30:/mipmap-xxxhdpi/ic_launcher.webp"
+    },
+    {
+        "merged": "/home/trefas/.gradle/daemon/8.13/com.habitat.android.app-debug-28:/mipmap-hdpi_ic_launcher.webp.flat",
+        "source": "/home/trefas/.gradle/daemon/8.13/com.habitat.android.app-main-30:/mipmap-hdpi/ic_launcher.webp"
+    },
+    {
+        "merged": "/home/trefas/.gradle/daemon/8.13/com.habitat.android.app-debug-28:/mipmap-mdpi_ic_launcher.webp.flat",
+        "source": "/home/trefas/.gradle/daemon/8.13/com.habitat.android.app-main-30:/mipmap-mdpi/ic_launcher.webp"
+    },
+    {
+        "merged": "/home/trefas/.gradle/daemon/8.13/com.habitat.android.app-debug-28:/mipmap-xxhdpi_ic_launcher_foreground.webp.flat",
+        "source": "/home/trefas/.gradle/daemon/8.13/com.habitat.android.app-main-30:/mipmap-xxhdpi/ic_launcher_foreground.webp"
+    },
+    {
+        "merged": "/home/trefas/.gradle/daemon/8.13/com.habitat.android.app-debug-28:/mipmap-mdpi_ic_launcher_round.webp.flat",
+        "source": "/home/trefas/.gradle/daemon/8.13/com.habitat.android.app-main-30:/mipmap-mdpi/ic_launcher_round.webp"
+    },
+    {
+        "merged": "/home/trefas/.gradle/daemon/8.13/com.habitat.android.app-debug-28:/mipmap-anydpi-v26_ic_launcher_round.xml.flat",
+        "source": "/home/trefas/.gradle/daemon/8.13/com.habitat.android.app-main-30:/mipmap-anydpi-v26/ic_launcher_round.xml"
+    },
+    {
+        "merged": "/home/trefas/.gradle/daemon/8.13/com.habitat.android.app-debug-28:/mipmap-mdpi_ic_launcher_foreground.webp.flat",
+        "source": "/home/trefas/.gradle/daemon/8.13/com.habitat.android.app-main-30:/mipmap-mdpi/ic_launcher_foreground.webp"
+    },
+    {
+        "merged": "/home/trefas/.gradle/daemon/8.13/com.habitat.android.app-debug-28:/mipmap-xxhdpi_ic_launcher.webp.flat",
+        "source": "/home/trefas/.gradle/daemon/8.13/com.habitat.android.app-main-30:/mipmap-xxhdpi/ic_launcher.webp"
+    },
+    {
+        "merged": "/home/trefas/.gradle/daemon/8.13/com.habitat.android.app-debug-28:/layout_dialog_settings.xml.flat",
+        "source": "/home/trefas/.gradle/daemon/8.13/com.habitat.android.app-main-30:/layout/dialog_settings.xml"
+    },
+    {
+        "merged": "/home/trefas/.gradle/daemon/8.13/com.habitat.android.app-debug-28:/mipmap-xxhdpi_ic_launcher_round.webp.flat",
+        "source": "/home/trefas/.gradle/daemon/8.13/com.habitat.android.app-main-30:/mipmap-xxhdpi/ic_launcher_round.webp"
+    },
+    {
+        "merged": "/home/trefas/.gradle/daemon/8.13/com.habitat.android.app-debug-28:/mipmap-xxhdpi_ic_launcher_monochrome.webp.flat",
+        "source": "/home/trefas/.gradle/daemon/8.13/com.habitat.android.app-main-30:/mipmap-xxhdpi/ic_launcher_monochrome.webp"
+    },
+    {
+        "merged": "/home/trefas/.gradle/daemon/8.13/com.habitat.android.app-debug-28:/mipmap-hdpi_ic_launcher_foreground.webp.flat",
+        "source": "/home/trefas/.gradle/daemon/8.13/com.habitat.android.app-main-30:/mipmap-hdpi/ic_launcher_foreground.webp"
     }
 ]

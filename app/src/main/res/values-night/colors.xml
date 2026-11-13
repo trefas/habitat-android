@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Catppuccin Mocha -->
+    <color name="cat_base">#1E1E2E</color>
+    <color name="cat_mantle">#181825</color>
+    <color name="cat_crust">#11111B</color>
+    <color name="cat_text">#CDD6F4</color>
+    <color name="cat_subtext0">#A6ADC8</color>
+    <color name="cat_subtext1">#BAC2DE</color>
+    <color name="cat_surface0">#313244</color>
+    <color name="cat_surface1">#45475A</color>
+    <color name="cat_surface2">#585B70</color>
+    <color name="cat_overlay0">#6C7086</color>
+    <color name="cat_blue">#89B4FA</color>
+    <color name="cat_lavender">#B4BEFE</color>
+    <color name="cat_sapphire">#74C7EC</color>
+    <color name="cat_teal">#94E2D5</color>
+    <color name="cat_green">#A6E3A1</color>
+    <color name="cat_yellow">#F9E2AF</color>
+    <color name="cat_peach">#FAB387</color>
+    <color name="cat_red">#F38BA8</color>
+    <color name="cat_maroon">#EBA0AC</color>
+    <color name="cat_pink">#F5C2E7</color>
+    <color name="cat_mauve">#CBA6F7</color>
+</resources>

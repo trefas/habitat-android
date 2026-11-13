@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="cat_base">#EFF1F5</color>
+    <color name="cat_blue">#1E66F5</color>
+    <color name="cat_crust">#DCE0E8</color>
+    <color name="cat_green">#40A02B</color>
+    <color name="cat_lavender">#7287FD</color>
+    <color name="cat_mantle">#E6E9EF</color>
+    <color name="cat_maroon">#E64553</color>
+    <color name="cat_mauve">#8839EF</color>
+    <color name="cat_overlay0">#9CA0B0</color>
+    <color name="cat_peach">#FE640B</color>
+    <color name="cat_pink">#EA76CB</color>
+    <color name="cat_red">#D20F39</color>
+    <color name="cat_sapphire">#209FB5</color>
+    <color name="cat_subtext0">#6C6F85</color>
+    <color name="cat_subtext1">#5C5F77</color>
+    <color name="cat_surface0">#CCD0DA</color>
+    <color name="cat_surface1">#BCC0CC</color>
+    <color name="cat_surface2">#ACB0BE</color>
+    <color name="cat_teal">#179299</color>
+    <color name="cat_text">#4C4F69</color>
+    <color name="cat_yellow">#DF8E1D</color>
+    <color name="ic_launcher_background">#C7AFAF</color>
+    <string name="app_name">Habitat</string>
+    <string name="btn_refresh">Refresh</string>
+    <string name="btn_settings">Settings</string>
+    <string name="dialog_btn_cancel">Cancel</string>
+    <string name="dialog_btn_save">Save</string>
+    <string name="dialog_ip_hint">Server IP address</string>
+    <string name="dialog_port_hint">Port</string>
+    <string name="dialog_settings_title">Connection Settings</string>
+    <string name="status_connected">Connected</string>
+    <string name="status_connecting">Connecting...</string>
+    <string name="status_disconnected">Disconnected</string>
+    <string name="toast_connection_failed">Connection failed</string>
+    <string name="toast_connection_success">Connection successful!</string>
+    <string name="toast_settings_saved">Settings saved</string>
+    <style name="Theme.Catppuccin" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        
+        <item name="colorPrimary">@color/cat_mauve</item>
+        <item name="colorOnPrimary">@color/cat_base</item>
+        <item name="colorSecondary">@color/cat_mauve</item>
+        <item name="colorOnSecondary">@color/cat_base</item>
+        <item name="android:colorBackground">@color/cat_base</item>
+        <item name="colorSurface">@color/cat_mantle</item>
+        <item name="colorOnSurface">@color/cat_text</item>
+        <item name="colorError">@color/cat_red</item>
+        <item name="colorOnError">@color/cat_base</item>
+
+        
+        <item name="android:windowBackground">@color/cat_base</item>
+        <item name="android:statusBarColor">@color/cat_mantle</item>
+        <item name="android:navigationBarColor">@color/cat_mantle</item>
+        <item name="android:windowLightStatusBar">true</item>
+
+        
+        <item name="android:textColorPrimary">@color/cat_text</item>
+        <item name="android:textColorSecondary">@color/cat_subtext0</item>
+
+        
+        <item name="android:fontFamily">@font/montserrat</item>
+        <item name="fontFamily">@font/montserrat</item>
+
+        
+        <item name="editTextStyle">@style/Widget.Catppuccin.EditText</item>
+    </style>
+    <style name="Widget.Catppuccin.EditText" parent="Widget.AppCompat.EditText">
+        <item name="android:textColor">@color/cat_text</item>
+        <item name="android:textColorHint">@color/cat_subtext0</item>
+        <item name="android:backgroundTint">@color/cat_surface2</item>
+    </style>
+</resources>
