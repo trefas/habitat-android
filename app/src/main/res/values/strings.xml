@@ -13,4 +13,13 @@
     <string name="toast_settings_saved">Settings saved</string>
     <string name="toast_connection_success">Connection successful!</string>
     <string name="toast_connection_failed">Connection failed</string>
+    <string name="login_title">Login</string>
+    <string name="hint_username">Username</string>
+    <string name="hint_password">Password</string>
+    <string name="btn_login">Log In</string>
+    <string name="error_empty_fields">Please fill in all fields</string>
+    <string name="error_auth_failed">Invalid username or password</string>
+    <string name="error_network">Network error</string>
+    <string name="welcome_message">Welcome, %1$s!</string>
+    <string name="btn_logout">Log Out</string>
 </resources>

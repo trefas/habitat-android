@@ -13,8 +13,12 @@ class ConnectionConfig(context: Context) {
         private const val KEY_PORT = "port"
         private const val DEFAULT_IP = "10.0.2.2"  // localhost для Android-эмулятора
         private const val DEFAULT_PORT = 8080
+        private const val KEY_AUTH_TOKEN = "auth_token"
     }
 
+    var authToken: String?
+        get() = prefs.getString(KEY_AUTH_TOKEN, null)
+        set(value) = prefs.edit().putString(KEY_AUTH_TOKEN, value).apply()
     var ipAddress: String
         get() = prefs.getString(KEY_IP_ADDRESS, DEFAULT_IP) ?: DEFAULT_IP
         set(value) = prefs.edit().putString(KEY_IP_ADDRESS, value).apply()
@@ -25,5 +29,9 @@ class ConnectionConfig(context: Context) {
 
     fun getBaseUrl(): String {
         return "http://$ipAddress:$port"
+    }
+
+    fun clearAuth() {
+        prefs.edit().remove(KEY_AUTH_TOKEN).apply()
     }
 }

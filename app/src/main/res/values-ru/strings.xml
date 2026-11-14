@@ -14,4 +14,13 @@
     <string name="toast_settings_saved">Настройки сохранены</string>
     <string name="toast_connection_success">Успешное подключение!</string>
     <string name="toast_connection_failed">Не удалось подключиться</string>
+    <string name="login_title">Вход в систему</string>
+    <string name="hint_username">Имя пользователя</string>
+    <string name="hint_password">Пароль</string>
+    <string name="btn_login">Войти</string>
+    <string name="error_empty_fields">Заполните все поля</string>
+    <string name="error_auth_failed">Неверный логин или пароль</string>
+    <string name="error_network">Ошибка сети</string>
+    <string name="welcome_message">Добро пожаловать, %1$s!</string>
+    <string name="btn_logout">Выйти</string>
 </resources>

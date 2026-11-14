@@ -1,6 +1,8 @@
 package com.habitat.android
 
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.widget.Button
 import android.widget.TextView
@@ -49,11 +51,18 @@ class MainActivity : AppCompatActivity() {
 
             if (success) {
                 tvStatus.text = getString(R.string.status_connected)
-                Toast.makeText(
-                    this@MainActivity,
-                    R.string.toast_connection_success,
-                    Toast.LENGTH_SHORT
-                ).show()
+
+                // Проверяем, есть ли уже токен
+                if (connectionConfig.authToken.isNullOrEmpty()) {
+                    // Токена нет — открываем экран входа
+                    val intent = Intent(this@MainActivity, LoginActivity::class.java)
+                    startActivity(intent)
+                    // НЕ вызываем finish() — оставляем MainActivity в стеке
+                    // Теперь кнопка "Назад" с экрана входа вернёт пользователя сюда
+                } else {
+                    // Токен есть — пользователь уже авторизован
+                    Toast.makeText(this@MainActivity, "Вы уже авторизованы", Toast.LENGTH_SHORT).show()
+                }
             } else {
                 tvStatus.text = getString(R.string.status_disconnected)
                 Toast.makeText(
@@ -69,12 +78,17 @@ class MainActivity : AppCompatActivity() {
 
     private fun connectToServer(): Boolean {
         return try {
-            val url = "${connectionConfig.getBaseUrl()}/health"
+            val url = connectionConfig.getBaseUrl()
+            Log.d("HabitatClient", "Attempting connection to: $url")
+
             val request = Request.Builder().url(url).build()
             client.newCall(request).execute().use { response ->
+                Log.d("HabitatClient", "Response code: ${response.code}")
+                Log.d("HabitatClient", "Response body: ${response.body?.string()}")
                 response.isSuccessful
             }
         } catch (e: IOException) {
+            Log.e("HabitatClient", "Connection failed", e)
             false
         }
     }
