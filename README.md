@@ -65,7 +65,8 @@ export ANDROID_HOME="$HOME/Android/Sdk"
 
 - **CI** (`.github/workflows/ci.yml`) запускается на push в `main`/`develop`, на
   pull request в `main` и вручную. Собирает debug и release APK, запускает lint
-  и прикладывает APK как артефакты сборки.
+  и прикладывает APK как артефакты сборки. Если квота хранилища GitHub Actions
+  исчерпана, шаг загрузки артефактов не считается ошибкой сборки.
 - **CD** (`.github/workflows/cd.yml`) запускается по тегу `v*`. Собирает
   release APK, считает SHA-256 и публикует файлы в GitHub Release.
 
