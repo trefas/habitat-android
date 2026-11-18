@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <style name="Theme.Catppuccin" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <item name="colorPrimary">@color/cat_blue</item>
         <item name="colorOnPrimary">@color/cat_base</item>
@@ -13,7 +13,7 @@
         <item name="android:windowBackground">@color/cat_base</item>
         <item name="android:statusBarColor">@color/cat_mantle</item>
         <item name="android:navigationBarColor">@color/cat_mantle</item>
-        <item name="android:windowLightStatusBar">false</item>
+        <item name="android:windowLightStatusBar" tools:ignore="NewApi">false</item>
 
         <item name="android:textColorPrimary">@color/cat_text</item>
         <item name="android:textColorSecondary">@color/cat_subtext0</item>

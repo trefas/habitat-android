@@ -1,125 +1,141 @@
 package com.habitat.android
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
-import android.view.LayoutInflater
+import android.view.View
 import android.widget.Button
+import android.widget.ProgressBar
 import android.widget.TextView
-import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import com.google.android.material.textfield.TextInputEditText
-import kotlinx.coroutines.*
-import okhttp3.OkHttpClient
-import okhttp3.Request
-import java.io.IOException
+import androidx.core.content.ContextCompat
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.launch
 
+/**
+ * Entry point of the app. Checks that the Habitat server is reachable and then
+ * routes either to the login screen or, when a refresh token is stored, to the
+ * authenticated welcome screen.
+ */
 class MainActivity : AppCompatActivity() {
 
     private lateinit var tvStatus: TextView
+    private lateinit var tvServerUrl: TextView
+    private lateinit var tvError: TextView
+    private lateinit var pbChecking: ProgressBar
     private lateinit var btnRefresh: Button
     private lateinit var btnSettings: Button
+
     private lateinit var connectionConfig: ConnectionConfig
 
-    private val client = OkHttpClient()
-    private val coroutineScope = CoroutineScope(Dispatchers.Main + Job())
+    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
+    private var isChecking = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        ApiClient.init(applicationContext)
         connectionConfig = ConnectionConfig(this)
 
         tvStatus = findViewById(R.id.tvStatus)
+        tvServerUrl = findViewById(R.id.tvServerUrl)
+        tvError = findViewById(R.id.tvError)
+        pbChecking = findViewById(R.id.pbChecking)
         btnRefresh = findViewById(R.id.btnRefresh)
         btnSettings = findViewById(R.id.btnSettings)
 
         btnRefresh.setOnClickListener { attemptConnection() }
-        btnSettings.setOnClickListener { showSettingsDialog() }
+        btnSettings.setOnClickListener {
+            SettingsDialog.show(this) {
+                updateServerLabel()
+                attemptConnection()
+            }
+        }
 
-        // Первая попытка подключения при запуске
+        updateServerLabel()
         attemptConnection()
     }
 
+    override fun onResume() {
+        super.onResume()
+        updateServerLabel()
+    }
+
+    private fun updateServerLabel() {
+        tvServerUrl.text = getString(R.string.server_label, connectionConfig.getBaseUrl())
+    }
+
     private fun attemptConnection() {
+        if (isChecking) return
+        isChecking = true
+
         tvStatus.text = getString(R.string.status_connecting)
+        tvStatus.setTextColor(ContextCompat.getColor(this, R.color.cat_subtext0))
+        tvError.visibility = View.GONE
+        pbChecking.visibility = View.VISIBLE
         btnRefresh.isEnabled = false
 
-        coroutineScope.launch {
-            val success = withContext(Dispatchers.IO) { connectToServer() }
+        scope.launch {
+            val health = ApiClient.checkHealth()
 
-            if (success) {
-                tvStatus.text = getString(R.string.status_connected)
+            if (isFinishing || isDestroyed) return@launch
 
-                // Проверяем, есть ли уже токен
-                if (connectionConfig.authToken.isNullOrEmpty()) {
-                    // Токена нет — открываем экран входа
-                    val intent = Intent(this@MainActivity, LoginActivity::class.java)
-                    startActivity(intent)
-                    // НЕ вызываем finish() — оставляем MainActivity в стеке
-                    // Теперь кнопка "Назад" с экрана входа вернёт пользователя сюда
-                } else {
-                    // Токен есть — пользователь уже авторизован
-                    Toast.makeText(this@MainActivity, "Вы уже авторизованы", Toast.LENGTH_SHORT).show()
-                }
-            } else {
-                tvStatus.text = getString(R.string.status_disconnected)
-                Toast.makeText(
-                    this@MainActivity,
-                    R.string.toast_connection_failed,
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
-
+            isChecking = false
+            pbChecking.visibility = View.GONE
             btnRefresh.isEnabled = true
-        }
-    }
 
-    private fun connectToServer(): Boolean {
-        return try {
-            val url = connectionConfig.getBaseUrl()
-            Log.d("HabitatClient", "Attempting connection to: $url")
+            when (health) {
+                HealthResult.Ok -> {
+                    tvStatus.text = getString(R.string.status_connected)
+                    tvStatus.setTextColor(ContextCompat.getColor(this@MainActivity, R.color.cat_green))
 
-            val request = Request.Builder().url(url).build()
-            client.newCall(request).execute().use { response ->
-                Log.d("HabitatClient", "Response code: ${response.code}")
-                Log.d("HabitatClient", "Response body: ${response.body?.string()}")
-                response.isSuccessful
-            }
-        } catch (e: IOException) {
-            Log.e("HabitatClient", "Connection failed", e)
-            false
-        }
-    }
-
-    private fun showSettingsDialog() {
-        val dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_settings, null)
-        val etIpAddress = dialogView.findViewById<TextInputEditText>(R.id.etIpAddress)
-        val etPort = dialogView.findViewById<TextInputEditText>(R.id.etPort)
-
-        etIpAddress.setText(connectionConfig.ipAddress)
-        etPort.setText(connectionConfig.port.toString())
-
-        AlertDialog.Builder(this)
-            .setTitle(R.string.dialog_settings_title)
-            .setView(dialogView)
-            .setPositiveButton(R.string.dialog_btn_save) { _, _ ->
-                val newIp = etIpAddress.text.toString().trim()
-                val newPort = etPort.text.toString().toIntOrNull()
-
-                if (newIp.isNotEmpty() && newPort != null) {
-                    connectionConfig.ipAddress = newIp
-                    connectionConfig.port = newPort
-                    Toast.makeText(this, R.string.toast_settings_saved, Toast.LENGTH_SHORT).show()
+                    if (ApiClient.hasSession()) {
+                        navigateTo(WelcomeActivity::class.java)
+                    } else {
+                        navigateTo(LoginActivity::class.java)
+                    }
                 }
+
+                is HealthResult.HttpError -> showConnectionError(
+                    getString(R.string.error_http, health.code),
+                )
+
+                is HealthResult.Failure -> showConnectionError(
+                    ErrorMapper.message(this@MainActivity, health.error),
+                )
+
+                HealthResult.InvalidResponse -> showConnectionError(
+                    getString(R.string.error_unexpected_response),
+                )
             }
-            .setNegativeButton(R.string.dialog_btn_cancel, null)
-            .show()
+        }
+    }
+
+    private fun showConnectionError(message: String) {
+        tvStatus.text = getString(R.string.status_disconnected)
+        tvStatus.setTextColor(ContextCompat.getColor(this, R.color.cat_red))
+        tvError.text = message
+        tvError.visibility = View.VISIBLE
+    }
+
+    /**
+     * Connection status is the root screen, so once the server is reachable the
+     * task is cleared. Back from the login/welcome screen then exits the app.
+     */
+    private fun navigateTo(target: Class<out Activity>) {
+        startActivity(
+            Intent(this, target).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            },
+        )
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        coroutineScope.cancel()
+        scope.cancel()
     }
 }

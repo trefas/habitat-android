@@ -3,6 +3,30 @@ plugins {
     id 'org.jetbrains.kotlin.android'
 }
 
+// Optional release signing. Configure these environment variables to sign a
+// release build with your own key:
+//   HABITAT_KEYSTORE_FILE, HABITAT_KEYSTORE_PASSWORD,
+//   HABITAT_KEY_ALIAS, HABITAT_KEY_PASSWORD
+// Without them the release APK is signed with the debug key, which keeps local
+// and CI builds installable but is not suitable for publishing to a store.
+def releaseKeystorePath = System.getenv("HABITAT_KEYSTORE_FILE")?.trim()
+def hasReleaseSigning = releaseKeystorePath != null && !releaseKeystorePath.isEmpty()
+
+if (hasReleaseSigning && !file(releaseKeystorePath).exists()) {
+    throw new GradleException("HABITAT_KEYSTORE_FILE does not exist: ${releaseKeystorePath}")
+}
+
+if (hasReleaseSigning) {
+    ["HABITAT_KEYSTORE_PASSWORD", "HABITAT_KEY_ALIAS", "HABITAT_KEY_PASSWORD"].each { name ->
+        if (!System.getenv(name)) {
+            throw new GradleException("${name} must be set when HABITAT_KEYSTORE_FILE is configured")
+        }
+    }
+}
+
+def appVersionCode = (project.findProperty("versionCode") ?: "1").toString().toInteger()
+def appVersionName = (project.findProperty("versionName") ?: "1.0").toString()
+
 android {
     namespace 'com.habitat.android'
     compileSdk 37
@@ -11,14 +35,31 @@ android {
         applicationId "com.habitat.android"
         minSdk 21
         targetSdk 33
-        versionCode 1
-        versionName "1.0"
+        versionCode appVersionCode
+        versionName appVersionName
+    }
+
+    signingConfigs {
+        if (hasReleaseSigning) {
+            release {
+                storeFile file(releaseKeystorePath)
+                storePassword System.getenv("HABITAT_KEYSTORE_PASSWORD")
+                keyAlias System.getenv("HABITAT_KEY_ALIAS")
+                keyPassword System.getenv("HABITAT_KEY_PASSWORD")
+            }
+        }
     }
 
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+
+            if (hasReleaseSigning) {
+                signingConfig signingConfigs.release
+            } else {
+                signingConfig signingConfigs.debug
+            }
         }
     }
     compileOptions {

@@ -2,137 +2,157 @@ package com.habitat.android
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
+import android.util.Patterns
+import android.view.View
+import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
 import android.widget.Button
+import android.widget.ProgressBar
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.textfield.TextInputEditText
-import kotlinx.coroutines.*
-import okhttp3.MediaType.Companion.toMediaType
-import okhttp3.OkHttpClient
-import okhttp3.Request
-import okhttp3.RequestBody.Companion.toRequestBody
-import org.json.JSONObject
-import java.io.IOException
+import com.google.android.material.textfield.TextInputLayout
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.launch
 
+/**
+ * Email/password authentication.
+ *
+ * Registration is intentionally not available on Android: accounts are created
+ * from the desktop client only.
+ */
 class LoginActivity : AppCompatActivity() {
 
-    private lateinit var etUsername: TextInputEditText
+    private lateinit var tilEmail: TextInputLayout
+    private lateinit var tilPassword: TextInputLayout
+    private lateinit var etEmail: TextInputEditText
     private lateinit var etPassword: TextInputEditText
     private lateinit var btnLogin: Button
+    private lateinit var btnSettings: Button
+    private lateinit var pbLogin: ProgressBar
+    private lateinit var tvServerUrl: TextView
+
     private lateinit var connectionConfig: ConnectionConfig
-    
-    private val client = OkHttpClient()
-    private val coroutineScope = CoroutineScope(Dispatchers.Main + Job())
+
+    private val scope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
+    private var isLoggingIn = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
+        ApiClient.init(applicationContext)
         connectionConfig = ConnectionConfig(this)
 
-        etUsername = findViewById(R.id.etUsername)
+        tilEmail = findViewById(R.id.tilEmail)
+        tilPassword = findViewById(R.id.tilPassword)
+        etEmail = findViewById(R.id.etEmail)
         etPassword = findViewById(R.id.etPassword)
         btnLogin = findViewById(R.id.btnLogin)
+        btnSettings = findViewById(R.id.btnSettings)
+        pbLogin = findViewById(R.id.pbLogin)
+        tvServerUrl = findViewById(R.id.tvServerUrl)
 
-        btnLogin.setOnClickListener {
-            val username = etUsername.text.toString().trim()
-            val password = etPassword.text.toString().trim()
-
-            if (username.isEmpty() || password.isEmpty()) {
-                Toast.makeText(this, R.string.error_empty_fields, Toast.LENGTH_SHORT).show()
-                return@setOnClickListener
-            }
-
-            attemptLogin(username, password)
+        btnLogin.setOnClickListener { attemptLogin() }
+        btnSettings.setOnClickListener {
+            SettingsDialog.show(this) { updateServerLabel() }
         }
-    }
 
-    private fun attemptLogin(username: String, password: String) {
-        btnLogin.isEnabled = false
-        btnLogin.text = "Вход..."
-
-        coroutineScope.launch {
-            val result = withContext(Dispatchers.IO) {
-                performLoginRequest(username, password)
-            }
-
-            if (result.isSuccess) {
-                val token = result.getOrNull()
-                if (!token.isNullOrEmpty()) {
-                    connectionConfig.authToken = token
-                }
-                Toast.makeText(this@LoginActivity, "Успешный вход!", Toast.LENGTH_SHORT).show()
-                // Здесь позже будет переход на главный экран приложения
-                // Пока просто покажем сообщение и закроем активность
-                finish() 
+        etPassword.setOnEditorActionListener { _, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                attemptLogin()
+                true
             } else {
-                val errorMsg = result.exceptionOrNull()?.message ?: getString(R.string.error_auth_failed)
-                Toast.makeText(this@LoginActivity, errorMsg, Toast.LENGTH_LONG).show()
-                btnLogin.isEnabled = true
-                btnLogin.text = getString(R.string.btn_login)
+                false
+            }
+        }
+
+        updateServerLabel()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        updateServerLabel()
+    }
+
+    private fun updateServerLabel() {
+        tvServerUrl.text = getString(R.string.server_label, connectionConfig.getBaseUrl())
+    }
+
+    private fun attemptLogin() {
+        if (isLoggingIn) return
+
+        tilEmail.error = null
+        tilPassword.error = null
+
+        val email = etEmail.text?.toString()?.trim().orEmpty()
+        val password = etPassword.text?.toString().orEmpty()
+
+        if (email.isEmpty() || password.isEmpty()) {
+            Toast.makeText(this, R.string.error_empty_fields, Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            tilEmail.error = getString(R.string.error_email_invalid)
+            return
+        }
+
+        hideKeyboard()
+        setLoading(true)
+
+        scope.launch {
+            try {
+                ApiClient.login(email, password)
+                SessionManager.clearPending()
+                goToWelcome()
+            } catch (e: CancellationException) {
+                throw e
+            } catch (error: Throwable) {
+                if (!isFinishing && !isDestroyed) {
+                    Toast.makeText(
+                        this@LoginActivity,
+                        ErrorMapper.message(this@LoginActivity, error),
+                        Toast.LENGTH_LONG,
+                    ).show()
+                }
+            } finally {
+                if (!isFinishing && !isDestroyed) {
+                    setLoading(false)
+                }
             }
         }
     }
 
-    private fun performLoginRequest(username: String, password: String): Result<String?> {
-        return try {
-            // ВНИМАНИЕ: Замените "/api/login" на реальный эндпоинт вашего Go-сервера
-            val url = "${connectionConfig.getBaseUrl()}/api/login"
-            Log.d("HabitatLogin", "Sending login request to: $url")
+    private fun setLoading(loading: Boolean) {
+        isLoggingIn = loading
+        btnLogin.isEnabled = !loading
+        btnLogin.text = getString(if (loading) R.string.btn_logging_in else R.string.btn_login)
+        pbLogin.visibility = if (loading) View.VISIBLE else View.GONE
+        etEmail.isEnabled = !loading
+        etPassword.isEnabled = !loading
+    }
 
-            // Формируем JSON-тело запроса
-            val json = JSONObject().apply {
-                put("username", username)
-                put("password", password)
-            }.toString()
+    private fun hideKeyboard() {
+        val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(etPassword.windowToken, 0)
+    }
 
-            val requestBody = json.toRequestBody("application/json; charset=utf-8".toMediaType())
-            val request = Request.Builder()
-                .url(url)
-                .post(requestBody)
-                .build()
-
-            client.newCall(request).execute().use { response ->
-                Log.d("HabitatLogin", "Response code: ${response.code}")
-
-                if (response.code == 200) {
-                    val responseBody = response.body?.string()
-                    Log.d("HabitatLogin", "Response body: $responseBody")
-
-                    // Пытаемся распарсить JSON и извлечь токен
-                    try {
-                        val jsonResponse = JSONObject(responseBody ?: "{}")
-                        val token = jsonResponse.optString("token", null)
-
-                        if (token != null) {
-                            // Сервер вернул токен — успех
-                            Result.success(token)
-                        } else {
-                            // Сервер вернул 200, но без токена
-                            // Пока сервер не реализовал /api/login правильно, считаем это ошибкой
-                            Log.w("HabitatLogin", "Server returned 200 but no token in response")
-                            Result.failure(IOException("Сервер пока не поддерживает аутентификацию"))
-                        }
-                    } catch (e: Exception) {
-                        // Ответ не является JSON
-                        Log.w("HabitatLogin", "Response is not valid JSON", e)
-                        Result.failure(IOException("Сервер пока не поддерживает аутентификацию"))
-                    }
-                } else if (response.code == 401 || response.code == 403) {
-                    Result.failure(IOException(getString(R.string.error_auth_failed)))
-                } else {
-                    Result.failure(IOException("Ошибка сервера: ${response.code}"))
-                }
-            }
-        } catch (e: IOException) {
-            Log.e("HabitatLogin", "Network error", e)
-            Result.failure(e)
-        }
+    private fun goToWelcome() {
+        startActivity(
+            Intent(this, WelcomeActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            },
+        )
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        coroutineScope.cancel()
+        scope.cancel()
     }
 }

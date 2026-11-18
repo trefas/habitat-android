@@ -1,26 +1,71 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Уклад</string>
+
+    <!-- Экран подключения -->
     <string name="btn_refresh">Обновить</string>
     <string name="btn_settings">Настроить</string>
-    <string name="status_connecting">Подключение...</string>
+    <string name="btn_settings_server">Настройки сервера</string>
+    <string name="status_connecting">Подключение…</string>
     <string name="status_connected">Подключено</string>
     <string name="status_disconnected">Отключено</string>
+    <string name="server_label">Сервер: %1$s</string>
+    <string name="error_http">Сервер ответил HTTP %1$d</string>
+    <string name="error_unexpected_response">Неожиданный ответ сервера</string>
+
+    <!-- Диалог настроек подключения -->
     <string name="dialog_settings_title">Настройки подключения</string>
-    <string name="dialog_ip_hint">IP-адрес сервера</string>
+    <string name="dialog_ip_hint">IP-адрес или домен сервера</string>
     <string name="dialog_port_hint">Порт</string>
+    <string name="dialog_https">Использовать HTTPS</string>
     <string name="dialog_btn_save">Сохранить</string>
     <string name="dialog_btn_cancel">Отмена</string>
+    <string name="error_invalid_connection">Укажите корректный адрес и порт (1–65535)</string>
     <string name="toast_settings_saved">Настройки сохранены</string>
-    <string name="toast_connection_success">Успешное подключение!</string>
-    <string name="toast_connection_failed">Не удалось подключиться</string>
+
+    <!-- Вход -->
     <string name="login_title">Вход в систему</string>
-    <string name="hint_username">Имя пользователя</string>
+    <string name="login_subtitle">Войдите в аккаунт Habitat</string>
+    <string name="hint_email">Email</string>
     <string name="hint_password">Пароль</string>
     <string name="btn_login">Войти</string>
+    <string name="btn_logging_in">Вход…</string>
     <string name="error_empty_fields">Заполните все поля</string>
-    <string name="error_auth_failed">Неверный логин или пароль</string>
+    <string name="error_email_invalid">Введите корректный email</string>
+    <string name="error_auth_failed">Неверный email или пароль</string>
+    <string name="error_user_blocked">Аккаунт заблокирован или не активирован</string>
+    <string name="error_not_found">Ресурс не найден</string>
     <string name="error_network">Ошибка сети</string>
+    <string name="error_timeout">Превышено время ожидания</string>
+    <string name="error_server">Ошибка сервера</string>
+    <string name="error_unknown">Неизвестная ошибка</string>
+
+    <!-- Приветствие и профиль -->
     <string name="welcome_message">Добро пожаловать, %1$s!</string>
+    <string name="welcome_subtitle">Вы авторизованы в системе Habitat.</string>
+    <string name="profile_title">ПРОФИЛЬ</string>
+    <string name="label_role">Роль</string>
+    <string name="label_status">Статус</string>
+    <string name="label_created_at">Создан</string>
+    <string name="profile_row">%1$s: %2$s</string>
+    <string name="value_unknown">—</string>
+    <string name="btn_retry">Повторить</string>
+    <string name="btn_change_password">Сменить пароль</string>
     <string name="btn_logout">Выйти</string>
+    <string name="btn_logging_out">Выход…</string>
+
+    <!-- Смена пароля -->
+    <string name="change_password_title">Смена пароля</string>
+    <string name="hint_current_password">Текущий пароль</string>
+    <string name="hint_new_password">Новый пароль</string>
+    <string name="hint_confirm_password">Повторите новый пароль</string>
+    <string name="error_password_short">Пароль должен содержать не менее 8 символов</string>
+    <string name="error_password_mismatch">Пароли не совпадают</string>
+    <string name="error_current_password">Неверный текущий пароль</string>
+    <string name="password_changed">Пароль изменён. Войдите заново.</string>
+
+    <!-- Сессия -->
+    <string name="session_expired_title">Сессия завершена</string>
+    <string name="session_expired_message">Сессия была завершена на сервере (обнаружено повторное использование токена или отзыв). Войдите заново.</string>
+    <string name="btn_ok">ОК</string>
 </resources>
