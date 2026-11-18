@@ -93,11 +93,8 @@ jobs:
           (cd dist && sha256sum "$APK_NAME" > "${APK_NAME}.sha256")
           ls -lh dist
 
-      # Release assets are the deliverable; artifact storage is only a
-      # convenience copy and must not block publishing when the quota is full.
       - name: Upload APK artifact
         uses: actions/upload-artifact@v7
-        continue-on-error: true
         with:
           name: habitat-android-${{ steps.version.outputs.name }}
           path: dist/*
