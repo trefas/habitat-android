@@ -51,8 +51,58 @@
     <string name="value_unknown">—</string>
     <string name="btn_retry">Повторить</string>
     <string name="btn_change_password">Сменить пароль</string>
+    <string name="btn_messages">Сообщения</string>
     <string name="btn_logout">Выйти</string>
     <string name="btn_logging_out">Выход…</string>
+    <string name="btn_back">Назад</string>
+    <string name="btn_previous">Назад</string>
+    <string name="btn_next">Вперёд</string>
+    <string name="btn_close">Закрыть</string>
+
+    <!-- Сообщения -->
+    <string name="messages_title">Сообщения</string>
+    <string name="messages_tab_inbox">Входящие</string>
+    <string name="messages_tab_sent">Отправленные</string>
+    <string name="messages_tab_all">Все</string>
+    <string name="messages_compose">Написать</string>
+    <string name="messages_send">Отправить</string>
+    <string name="messages_sending">Отправка…</string>
+    <string name="messages_empty">В этой папке пока нет сообщений.</string>
+    <string name="messages_sent">Сообщение отправлено.</string>
+    <string name="messages_recipients_hint">Получатели</string>
+    <string name="messages_recipients_helper">Email или UUID через запятую или с новой строки</string>
+    <string name="messages_text_hint">Текст сообщения</string>
+    <string name="messages_recipients_title">Получатели</string>
+    <string name="messages_no_recipients">Получателей нет.</string>
+    <string name="messages_share_hint">Поделиться с (email или UUID)</string>
+    <string name="messages_share_action">Выдать доступ</string>
+    <string name="messages_share_done">Доступ выдан.</string>
+    <string name="messages_revoke_done">Доступ отозван.</string>
+    <string name="messages_meta">%1$s · %2$s</string>
+    <string name="messages_recipients_count">Получателей: %1$d</string>
+    <string name="messages_owner_status">Прочитали %1$d из %2$d</string>
+    <string name="message_from_you">Вы</string>
+    <string name="message_read">Прочитано</string>
+    <string name="message_unread">Не прочитано</string>
+    <string name="message_read_at">Прочитано: %1$s</string>
+    <string name="btn_revoke">Отозвать</string>
+    <string name="page_info">Страница %1$d из %2$d</string>
+    <string name="messages_revoke_confirm">Отозвать доступ у %1$s?</string>
+    <string name="error_empty_message">Введите текст сообщения</string>
+    <string name="error_empty_recipients">Укажите хотя бы одного получателя</string>
+    <string name="error_forbidden">Недостаточно прав для выполнения этого действия</string>
+
+    <!-- Уведомления -->
+    <string name="notifications_title">Уведомления</string>
+    <string name="notifications_unread_only">Только непрочитанные</string>
+    <string name="notifications_empty">Уведомлений нет.</string>
+    <string name="notifications_open">Открыть</string>
+    <string name="notifications_mark_read">Прочитать</string>
+    <string name="notification_share_received">Доступ к сообщению</string>
+    <string name="notification_share_revoked">Доступ отозван</string>
+    <string name="notification_share_expiring">Доступ к сообщению скоро истечёт</string>
+    <string name="notification_entity_copied">Создана копия</string>
+    <string name="notification_entity_updated">Сущность обновлена</string>
 
     <!-- Смена пароля -->
     <string name="change_password_title">Смена пароля</string>

@@ -37,6 +37,7 @@ class WelcomeActivity : AppCompatActivity(), SessionManager.Listener {
     private lateinit var profileCard: LinearLayout
     private lateinit var pbProfile: ProgressBar
     private lateinit var btnRetry: Button
+    private lateinit var btnMessages: Button
     private lateinit var btnChangePassword: Button
     private lateinit var btnLogout: Button
 
@@ -63,10 +64,14 @@ class WelcomeActivity : AppCompatActivity(), SessionManager.Listener {
         profileCard = findViewById(R.id.profileCard)
         pbProfile = findViewById(R.id.pbProfile)
         btnRetry = findViewById(R.id.btnRetry)
+        btnMessages = findViewById(R.id.btnMessages)
         btnChangePassword = findViewById(R.id.btnChangePassword)
         btnLogout = findViewById(R.id.btnLogout)
 
         btnRetry.setOnClickListener { loadProfile() }
+        btnMessages.setOnClickListener {
+            startActivity(Intent(this, MessagesActivity::class.java))
+        }
         btnChangePassword.setOnClickListener { showChangePasswordDialog() }
         btnLogout.setOnClickListener { performLogout() }
 

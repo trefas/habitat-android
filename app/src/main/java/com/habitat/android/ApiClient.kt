@@ -9,6 +9,7 @@ import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
+import org.json.JSONArray
 import org.json.JSONObject
 import java.io.IOException
 import java.util.concurrent.TimeUnit
@@ -21,6 +22,66 @@ data class User(
     val role: String,
     val status: String? = null,
     val createdAt: String? = null,
+)
+
+/** Author of a message. */
+data class MessagePerson(
+    val id: String,
+    val email: String,
+    val displayName: String,
+)
+
+/** A user who can read the message, with the read receipt. */
+data class MessageRecipient(
+    val userId: String,
+    val email: String,
+    val displayName: String,
+    val readAt: String?,
+    val isRead: Boolean,
+)
+
+/** A single message returned by `/api/v1/messages`. */
+data class Message(
+    val id: String,
+    val text: String,
+    val sender: MessagePerson,
+    val isOwner: Boolean,
+    val readAt: String?,
+    val isRead: Boolean,
+    val recipientsCount: Int,
+    val readCount: Int,
+    val recipients: List<MessageRecipient>,
+    val createdAt: String,
+    val updatedAt: String,
+)
+
+/** A page of messages. */
+data class MessagePage(
+    val items: List<Message>,
+    val total: Int,
+    val limit: Int,
+    val offset: Int,
+)
+
+/** A server-side notification delivered to the current user. */
+data class AppNotification(
+    val id: String,
+    val kind: String,
+    val entityId: String?,
+    val shareId: String?,
+    val actorId: String?,
+    val textPreview: String,
+    val readAt: String?,
+    val isRead: Boolean,
+    val createdAt: String,
+)
+
+/** A page of notifications. */
+data class NotificationPage(
+    val items: List<AppNotification>,
+    val total: Int,
+    val limit: Int,
+    val offset: Int,
 )
 
 /** Result of a health check against the `/healthz` endpoint. */
@@ -169,6 +230,96 @@ object ApiClient {
         }
 
         clearSession()
+    }
+
+    /**
+     * Fetches messages for the current user.
+     *
+     * @param box one of `inbox`, `sent`, `all`.
+     * @param limit page size, 1..100.
+     * @param offset page offset, >= 0.
+     */
+    suspend fun listMessages(box: String, limit: Int = 20, offset: Int = 0): MessagePage {
+        val response = authenticatedRequest(
+            "GET",
+            "/api/v1/messages?box=$box&limit=$limit&offset=$offset",
+        )
+        if (!response.isSuccessful) {
+            throw apiException(response)
+        }
+        return parseMessagePage(JSONObject(response.body))
+    }
+
+    /** Fetches a single message available to the current user. */
+    suspend fun getMessage(id: String): Message {
+        val response = authenticatedRequest("GET", "/api/v1/messages/$id")
+        if (!response.isSuccessful) {
+            throw apiException(response)
+        }
+        return parseMessage(JSONObject(response.body))
+    }
+
+    /** Sends a message to one or more recipients (email or UUID). */
+    suspend fun sendMessage(text: String, recipients: List<String>): Message {
+        val body = JSONObject()
+            .put("text", text)
+            .put("recipients", JSONArray(recipients))
+
+        val response = authenticatedRequest("POST", "/api/v1/messages", body)
+        if (!response.isSuccessful) {
+            throw apiException(response)
+        }
+        return parseMessage(JSONObject(response.body))
+    }
+
+    /** Marks the message as read by the current recipient. Idempotent. */
+    suspend fun markMessageRead(id: String) {
+        val response = authenticatedRequest("POST", "/api/v1/messages/$id/read")
+        if (!response.isSuccessful) {
+            throw apiException(response)
+        }
+    }
+
+    /** Grants access to the current user's message to additional recipients. */
+    suspend fun shareMessage(id: String, recipients: List<String>): List<MessageRecipient> {
+        val body = JSONObject().put("recipients", JSONArray(recipients))
+        val response = authenticatedRequest("POST", "/api/v1/messages/$id/shares", body)
+        if (!response.isSuccessful) {
+            throw apiException(response)
+        }
+        return parseRecipients(JSONObject(response.body))
+    }
+
+    /** Revokes a recipient's access to the current user's message. */
+    suspend fun revokeMessageShare(id: String, granteeId: String) {
+        val response = authenticatedRequest("DELETE", "/api/v1/messages/$id/shares/$granteeId")
+        if (!response.isSuccessful) {
+            throw apiException(response)
+        }
+    }
+
+    /** Fetches server-side notifications for the current user. */
+    suspend fun listNotifications(
+        unreadOnly: Boolean = false,
+        limit: Int = 20,
+        offset: Int = 0,
+    ): NotificationPage {
+        val response = authenticatedRequest(
+            "GET",
+            "/api/v1/notifications?unread=$unreadOnly&limit=$limit&offset=$offset",
+        )
+        if (!response.isSuccessful) {
+            throw apiException(response)
+        }
+        return parseNotificationPage(JSONObject(response.body))
+    }
+
+    /** Marks a notification as read. Idempotent and only for the owner. */
+    suspend fun markNotificationRead(id: String) {
+        val response = authenticatedRequest("POST", "/api/v1/notifications/$id/read")
+        if (!response.isSuccessful) {
+            throw apiException(response)
+        }
     }
 
     /** Revokes the refresh token on the server and clears the local session. */
@@ -320,6 +471,93 @@ object ApiClient {
         }
 
         return ApiException(response.code, errorCode, message)
+    }
+
+    private fun parseMessagePage(data: JSONObject): MessagePage {
+        val items = data.optJSONArray("items") ?: JSONArray()
+        val list = ArrayList<Message>(items.length())
+        for (i in 0 until items.length()) {
+            items.optJSONObject(i)?.let { list.add(parseMessage(it)) }
+        }
+        return MessagePage(
+            items = list,
+            total = data.optInt("total", list.size),
+            limit = data.optInt("limit", list.size),
+            offset = data.optInt("offset", 0),
+        )
+    }
+
+    private fun parseMessage(data: JSONObject): Message {
+        val senderData = data.optJSONObject("sender") ?: JSONObject()
+        return Message(
+            id = data.optString("id"),
+            text = data.optString("text"),
+            sender = MessagePerson(
+                id = senderData.optString("id"),
+                email = senderData.optString("email"),
+                displayName = senderData.optString("display_name"),
+            ),
+            isOwner = data.optBoolean("is_owner"),
+            readAt = nullableString(data, "read_at"),
+            isRead = data.optBoolean("is_read"),
+            recipientsCount = data.optInt("recipients_count"),
+            readCount = data.optInt("read_count"),
+            recipients = parseRecipients(data),
+            createdAt = data.optString("created_at"),
+            updatedAt = data.optString("updated_at"),
+        )
+    }
+
+    private fun parseRecipients(data: JSONObject): List<MessageRecipient> {
+        val items = data.optJSONArray("items") ?: data.optJSONArray("recipients") ?: JSONArray()
+        val list = ArrayList<MessageRecipient>(items.length())
+        for (i in 0 until items.length()) {
+            val item = items.optJSONObject(i) ?: continue
+            list.add(
+                MessageRecipient(
+                    userId = item.optString("user_id"),
+                    email = item.optString("email"),
+                    displayName = item.optString("display_name"),
+                    readAt = nullableString(item, "read_at"),
+                    isRead = item.optBoolean("is_read") || !item.isNull("read_at"),
+                ),
+            )
+        }
+        return list
+    }
+
+    private fun parseNotificationPage(data: JSONObject): NotificationPage {
+        val items = data.optJSONArray("items") ?: JSONArray()
+        val list = ArrayList<AppNotification>(items.length())
+        for (i in 0 until items.length()) {
+            val item = items.optJSONObject(i) ?: continue
+            list.add(
+                AppNotification(
+                    id = item.optString("id"),
+                    kind = item.optString("kind"),
+                    entityId = nullableString(item, "entity_id"),
+                    shareId = nullableString(item, "share_id"),
+                    actorId = nullableString(item, "actor_id"),
+                    textPreview = item.optJSONObject("payload")
+                        ?.optString("text_preview")
+                        .orEmpty(),
+                    readAt = nullableString(item, "read_at"),
+                    isRead = item.optBoolean("is_read") || !item.isNull("read_at"),
+                    createdAt = item.optString("created_at"),
+                ),
+            )
+        }
+        return NotificationPage(
+            items = list,
+            total = data.optInt("total", list.size),
+            limit = data.optInt("limit", list.size),
+            offset = data.optInt("offset", 0),
+        )
+    }
+
+    private fun nullableString(data: JSONObject, key: String): String? {
+        if (!data.has(key) || data.isNull(key)) return null
+        return data.optString(key).takeIf { it.isNotBlank() }
     }
 
     private fun parseUser(data: JSONObject): User {
