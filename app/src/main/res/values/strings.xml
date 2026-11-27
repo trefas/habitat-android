@@ -51,6 +51,7 @@
     <string name="btn_retry">Retry</string>
     <string name="btn_change_password">Change password</string>
     <string name="btn_messages">Messages</string>
+    <string name="btn_lists">Lists</string>
     <string name="btn_logout">Sign out</string>
     <string name="btn_logging_out">Signing out…</string>
     <string name="btn_back">Back</string>
@@ -91,6 +92,44 @@
     <string name="error_empty_recipients">Specify at least one recipient</string>
     <string name="error_forbidden">You do not have permission to perform this action</string>
 
+    <!-- Lists -->
+    <string name="lists_title">Lists</string>
+    <string name="lists_create">New list</string>
+    <string name="lists_creating">Creating…</string>
+    <string name="lists_empty">There are no lists yet. Create the first one.</string>
+    <string name="lists_title_hint">List name</string>
+    <string name="lists_items_title">Items</string>
+    <string name="lists_item_hint">Item text</string>
+    <string name="lists_add_item">+ Add item</string>
+    <string name="lists_item_remove">Remove</string>
+    <string name="lists_item_edit">Edit</string>
+    <string name="lists_item_delete">Delete</string>
+    <string name="lists_item_delete_confirm">Delete item “%1$s”?</string>
+    <string name="lists_item_rename_title">Edit item</string>
+    <string name="lists_no_items">There are no items in this list yet.</string>
+    <string name="lists_share_hint">Share with (email or UUID)</string>
+    <string name="lists_share_action">Grant access</string>
+    <string name="lists_share_done">Access granted.</string>
+    <string name="lists_revoke_done">Access revoked.</string>
+    <string name="lists_recipients_title">Recipients</string>
+    <string name="lists_no_recipients">No one has access yet.</string>
+    <string name="lists_revoke_confirm">Revoke access from %1$s?</string>
+    <string name="lists_archive">Delete list</string>
+    <string name="lists_archive_confirm">Delete list “%1$s”? It will become unavailable to everyone.</string>
+    <string name="lists_archived">List deleted.</string>
+    <string name="lists_created">List created.</string>
+    <string name="lists_title_updated">Name updated.</string>
+    <string name="lists_title_required">Enter the list name</string>
+    <string name="lists_title_too_long">Name must not exceed 256 characters</string>
+    <string name="lists_item_required">Enter the item text</string>
+    <string name="lists_item_too_long">Item text must not exceed 500 characters</string>
+    <string name="lists_permission_owner">Owner</string>
+    <string name="lists_permission_write">Editable</string>
+    <string name="lists_permission_read">Read only</string>
+    <string name="lists_progress">Checked: %1$d / %2$d</string>
+    <string name="lists_owner_you">You</string>
+    <string name="lists_detail_owner">Owner: %1$s · %2$s</string>
+
     <!-- Notifications -->
     <string name="notifications_title">Notifications</string>
     <string name="notifications_unread_only">Unread only</string>
@@ -99,6 +138,8 @@
     <string name="notifications_mark_read">Mark as read</string>
     <string name="notification_share_received">Message access granted</string>
     <string name="notification_share_revoked">Message access revoked</string>
+    <string name="notification_list_share_received">List access granted</string>
+    <string name="notification_list_share_revoked">List access revoked</string>
     <string name="notification_share_expiring">Message access is about to expire</string>
     <string name="notification_entity_copied">A copy was created</string>
     <string name="notification_entity_updated">Entity updated</string>

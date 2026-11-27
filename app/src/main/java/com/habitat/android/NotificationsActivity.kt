@@ -175,8 +175,8 @@ class NotificationsActivity : AppCompatActivity(), SessionManager.Listener {
         val btnOpen = card.findViewById<Button>(R.id.btnNotificationOpen)
         val btnRead = card.findViewById<Button>(R.id.btnNotificationRead)
 
-        tvKind.text = kindLabel(notification.kind)
-        tvText.text = notification.textPreview.ifBlank { kindLabel(notification.kind) }
+        tvKind.text = kindLabel(notification)
+        tvText.text = notification.textPreview.ifBlank { kindLabel(notification) }
         tvMeta.text = formatDate(notification.createdAt)
 
         tvStatus.text = if (notification.isRead) {
@@ -203,13 +203,28 @@ class NotificationsActivity : AppCompatActivity(), SessionManager.Listener {
         btnRead.setOnClickListener { markRead(notification) }
     }
 
-    private fun kindLabel(kind: String): String = when (kind) {
-        "share_received" -> getString(R.string.notification_share_received)
-        "share_revoked" -> getString(R.string.notification_share_revoked)
-        "share_expiring" -> getString(R.string.notification_share_expiring)
-        "entity_copied" -> getString(R.string.notification_entity_copied)
-        "entity_updated" -> getString(R.string.notification_entity_updated)
-        else -> kind
+    private fun kindLabel(notification: AppNotification): String {
+        val isList = notification.entityType == "list"
+        return when (notification.kind) {
+            "share_received" -> getString(
+                if (isList) {
+                    R.string.notification_list_share_received
+                } else {
+                    R.string.notification_share_received
+                },
+            )
+            "share_revoked" -> getString(
+                if (isList) {
+                    R.string.notification_list_share_revoked
+                } else {
+                    R.string.notification_share_revoked
+                },
+            )
+            "share_expiring" -> getString(R.string.notification_share_expiring)
+            "entity_copied" -> getString(R.string.notification_entity_copied)
+            "entity_updated" -> getString(R.string.notification_entity_updated)
+            else -> notification.kind
+        }
     }
 
     private fun markRead(notification: AppNotification) {
@@ -240,6 +255,20 @@ class NotificationsActivity : AppCompatActivity(), SessionManager.Listener {
                     ApiClient.markNotificationRead(notification.id)
                     applyReadState(notification.id)
                 }
+
+                if (notification.entityType == "list") {
+                    if (notification.kind != "share_revoked" && !isFinishing && !isDestroyed) {
+                        startActivity(
+                            Intent(this@NotificationsActivity, ListsActivity::class.java).apply {
+                                putExtra(ListsActivity.EXTRA_LIST_ID, entityId)
+                                flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or
+                                    Intent.FLAG_ACTIVITY_SINGLE_TOP
+                            },
+                        )
+                    }
+                    return@launch
+                }
+
                 if (!isFinishing && !isDestroyed) {
                     startActivity(
                         Intent(this@NotificationsActivity, MessagesActivity::class.java).apply {

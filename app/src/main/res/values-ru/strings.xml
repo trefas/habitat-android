@@ -52,6 +52,7 @@
     <string name="btn_retry">Повторить</string>
     <string name="btn_change_password">Сменить пароль</string>
     <string name="btn_messages">Сообщения</string>
+    <string name="btn_lists">Списки</string>
     <string name="btn_logout">Выйти</string>
     <string name="btn_logging_out">Выход…</string>
     <string name="btn_back">Назад</string>
@@ -92,6 +93,44 @@
     <string name="error_empty_recipients">Укажите хотя бы одного получателя</string>
     <string name="error_forbidden">Недостаточно прав для выполнения этого действия</string>
 
+    <!-- Списки -->
+    <string name="lists_title">Списки</string>
+    <string name="lists_create">Новый список</string>
+    <string name="lists_creating">Создание…</string>
+    <string name="lists_empty">Списков пока нет. Создайте первый.</string>
+    <string name="lists_title_hint">Название списка</string>
+    <string name="lists_items_title">Пункты</string>
+    <string name="lists_item_hint">Текст пункта</string>
+    <string name="lists_add_item">+ Добавить пункт</string>
+    <string name="lists_item_remove">Убрать</string>
+    <string name="lists_item_edit">Изменить</string>
+    <string name="lists_item_delete">Удалить</string>
+    <string name="lists_item_delete_confirm">Удалить пункт «%1$s»?</string>
+    <string name="lists_item_rename_title">Изменить пункт</string>
+    <string name="lists_no_items">В списке пока нет пунктов.</string>
+    <string name="lists_share_hint">Поделиться с (email или UUID)</string>
+    <string name="lists_share_action">Выдать доступ</string>
+    <string name="lists_share_done">Доступ выдан.</string>
+    <string name="lists_revoke_done">Доступ отозван.</string>
+    <string name="lists_recipients_title">Получатели</string>
+    <string name="lists_no_recipients">Доступ никому не выдан.</string>
+    <string name="lists_revoke_confirm">Отозвать доступ у %1$s?</string>
+    <string name="lists_archive">Удалить список</string>
+    <string name="lists_archive_confirm">Удалить список «%1$s»? Он станет недоступен всем.</string>
+    <string name="lists_archived">Список удалён.</string>
+    <string name="lists_created">Список создан.</string>
+    <string name="lists_title_updated">Название обновлено.</string>
+    <string name="lists_title_required">Введите название списка</string>
+    <string name="lists_title_too_long">Название не должно превышать 256 символов</string>
+    <string name="lists_item_required">Введите текст пункта</string>
+    <string name="lists_item_too_long">Текст пункта не должен превышать 500 символов</string>
+    <string name="lists_permission_owner">Владелец</string>
+    <string name="lists_permission_write">Можно редактировать</string>
+    <string name="lists_permission_read">Только чтение</string>
+    <string name="lists_progress">Отмечено: %1$d / %2$d</string>
+    <string name="lists_owner_you">Вы</string>
+    <string name="lists_detail_owner">Владелец: %1$s · %2$s</string>
+
     <!-- Уведомления -->
     <string name="notifications_title">Уведомления</string>
     <string name="notifications_unread_only">Только непрочитанные</string>
@@ -100,6 +139,8 @@
     <string name="notifications_mark_read">Прочитать</string>
     <string name="notification_share_received">Доступ к сообщению</string>
     <string name="notification_share_revoked">Доступ отозван</string>
+    <string name="notification_list_share_received">Доступ к списку</string>
+    <string name="notification_list_share_revoked">Доступ к списку отозван</string>
     <string name="notification_share_expiring">Доступ к сообщению скоро истечёт</string>
     <string name="notification_entity_copied">Создана копия</string>
     <string name="notification_entity_updated">Сущность обновлена</string>

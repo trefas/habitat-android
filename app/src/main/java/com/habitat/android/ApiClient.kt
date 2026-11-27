@@ -70,6 +70,7 @@ data class AppNotification(
     val entityId: String?,
     val shareId: String?,
     val actorId: String?,
+    val entityType: String?,
     val textPreview: String,
     val readAt: String?,
     val isRead: Boolean,
@@ -82,6 +83,56 @@ data class NotificationPage(
     val total: Int,
     val limit: Int,
     val offset: Int,
+)
+
+/** A single item of a checklist. */
+data class ChecklistItem(
+    val id: String,
+    val text: String,
+    val isChecked: Boolean,
+    val position: Long,
+    val createdAt: String,
+    val updatedAt: String,
+)
+
+/** A user who has access to a checklist. */
+data class ListRecipient(
+    val userId: String,
+    val email: String,
+    val displayName: String,
+    val permission: String,
+    val grantedAt: String,
+)
+
+/** A checklist returned by `/api/v1/lists`. */
+data class HabitatList(
+    val id: String,
+    val title: String,
+    val owner: MessagePerson,
+    val isOwner: Boolean,
+    val canEdit: Boolean,
+    val permission: String,
+    val itemsTotal: Int,
+    val itemsChecked: Int,
+    val recipientsCount: Int,
+    val items: List<ChecklistItem>,
+    val recipients: List<ListRecipient>,
+    val createdAt: String,
+    val updatedAt: String,
+)
+
+/** A page of checklists. */
+data class ListPage(
+    val items: List<HabitatList>,
+    val total: Int,
+    val limit: Int,
+    val offset: Int,
+)
+
+/** An item draft used when creating a checklist. */
+data class ChecklistItemDraft(
+    val text: String,
+    val isChecked: Boolean = false,
 )
 
 /** Result of a health check against the `/healthz` endpoint. */
@@ -322,6 +373,133 @@ object ApiClient {
         }
     }
 
+    /** Fetches checklists available to the current user. */
+    suspend fun listLists(limit: Int = 20, offset: Int = 0): ListPage {
+        val response = authenticatedRequest(
+            "GET",
+            "/api/v1/lists?limit=$limit&offset=$offset",
+        )
+        if (!response.isSuccessful) {
+            throw apiException(response)
+        }
+        return parseListPage(JSONObject(response.body))
+    }
+
+    /** Fetches a single checklist with its items and, for the owner, recipients. */
+    suspend fun getList(id: String): HabitatList {
+        val response = authenticatedRequest("GET", "/api/v1/lists/$id")
+        if (!response.isSuccessful) {
+            throw apiException(response)
+        }
+        return parseHabitatList(JSONObject(response.body))
+    }
+
+    /** Creates a checklist and optionally shares it with recipients. */
+    suspend fun createList(
+        title: String,
+        items: List<ChecklistItemDraft>,
+        recipients: List<String>,
+    ): HabitatList {
+        val itemsJson = JSONArray()
+        for (item in items) {
+            itemsJson.put(
+                JSONObject()
+                    .put("text", item.text)
+                    .put("is_checked", item.isChecked),
+            )
+        }
+
+        val body = JSONObject()
+            .put("title", title)
+            .put("items", itemsJson)
+            .put("recipients", JSONArray(recipients))
+
+        val response = authenticatedRequest("POST", "/api/v1/lists", body)
+        if (!response.isSuccessful) {
+            throw apiException(response)
+        }
+        return parseHabitatList(JSONObject(response.body))
+    }
+
+    /** Renames a checklist. Requires the owner or write permission. */
+    suspend fun updateList(id: String, title: String): HabitatList {
+        val body = JSONObject().put("title", title)
+        val response = authenticatedRequest("PATCH", "/api/v1/lists/$id", body)
+        if (!response.isSuccessful) {
+            throw apiException(response)
+        }
+        return parseHabitatList(JSONObject(response.body))
+    }
+
+    /** Archives a checklist. Only the owner may do this. */
+    suspend fun archiveList(id: String) {
+        val response = authenticatedRequest("DELETE", "/api/v1/lists/$id")
+        if (!response.isSuccessful) {
+            throw apiException(response)
+        }
+    }
+
+    /** Appends an item to the checklist. */
+    suspend fun addListItem(
+        id: String,
+        text: String,
+        isChecked: Boolean = false,
+    ): HabitatList {
+        val body = JSONObject()
+            .put("text", text)
+            .put("is_checked", isChecked)
+        val response = authenticatedRequest("POST", "/api/v1/lists/$id/items", body)
+        if (!response.isSuccessful) {
+            throw apiException(response)
+        }
+        return parseHabitatList(JSONObject(response.body))
+    }
+
+    /** Updates the text and/or checked state of a checklist item. */
+    suspend fun updateListItem(
+        id: String,
+        itemId: String,
+        text: String? = null,
+        isChecked: Boolean? = null,
+    ): HabitatList {
+        val body = JSONObject()
+        if (text != null) body.put("text", text)
+        if (isChecked != null) body.put("is_checked", isChecked)
+
+        val response = authenticatedRequest("PATCH", "/api/v1/lists/$id/items/$itemId", body)
+        if (!response.isSuccessful) {
+            throw apiException(response)
+        }
+        return parseHabitatList(JSONObject(response.body))
+    }
+
+    /** Deletes a checklist item. */
+    suspend fun deleteListItem(id: String, itemId: String): HabitatList {
+        val response = authenticatedRequest("DELETE", "/api/v1/lists/$id/items/$itemId")
+        if (!response.isSuccessful) {
+            throw apiException(response)
+        }
+        return parseHabitatList(JSONObject(response.body))
+    }
+
+    /** Grants write access to the checklist to additional recipients. */
+    suspend fun shareList(id: String, recipients: List<String>): List<ListRecipient> {
+        val body = JSONObject().put("recipients", JSONArray(recipients))
+        val response = authenticatedRequest("POST", "/api/v1/lists/$id/shares", body)
+        if (!response.isSuccessful) {
+            throw apiException(response)
+        }
+        return parseListRecipients(JSONObject(response.body).optJSONArray("items") ?: JSONArray())
+    }
+
+    /** Revokes a recipient's access to the checklist. */
+    suspend fun revokeListShare(id: String, granteeId: String) {
+        val response = authenticatedRequest("DELETE", "/api/v1/lists/$id/shares/$granteeId")
+        if (!response.isSuccessful) {
+            throw apiException(response)
+        }
+    }
+
     /** Revokes the refresh token on the server and clears the local session. */
     suspend fun logout() {
         val refreshToken = requireConfig().refreshToken
@@ -531,6 +709,7 @@ object ApiClient {
         val list = ArrayList<AppNotification>(items.length())
         for (i in 0 until items.length()) {
             val item = items.optJSONObject(i) ?: continue
+            val payload = item.optJSONObject("payload")
             list.add(
                 AppNotification(
                     id = item.optString("id"),
@@ -538,7 +717,8 @@ object ApiClient {
                     entityId = nullableString(item, "entity_id"),
                     shareId = nullableString(item, "share_id"),
                     actorId = nullableString(item, "actor_id"),
-                    textPreview = item.optJSONObject("payload")
+                    entityType = payload?.optString("entity_type")?.takeIf { it.isNotBlank() },
+                    textPreview = payload
                         ?.optString("text_preview")
                         .orEmpty(),
                     readAt = nullableString(item, "read_at"),
@@ -553,6 +733,76 @@ object ApiClient {
             limit = data.optInt("limit", list.size),
             offset = data.optInt("offset", 0),
         )
+    }
+
+    private fun parseListPage(data: JSONObject): ListPage {
+        val items = data.optJSONArray("items") ?: JSONArray()
+        val list = ArrayList<HabitatList>(items.length())
+        for (i in 0 until items.length()) {
+            items.optJSONObject(i)?.let { list.add(parseHabitatList(it)) }
+        }
+        return ListPage(
+            items = list,
+            total = data.optInt("total", list.size),
+            limit = data.optInt("limit", list.size),
+            offset = data.optInt("offset", 0),
+        )
+    }
+
+    private fun parseHabitatList(data: JSONObject): HabitatList {
+        val ownerData = data.optJSONObject("owner") ?: JSONObject()
+        val itemsJson = data.optJSONArray("items") ?: JSONArray()
+        val items = ArrayList<ChecklistItem>(itemsJson.length())
+        for (i in 0 until itemsJson.length()) {
+            val item = itemsJson.optJSONObject(i) ?: continue
+            items.add(
+                ChecklistItem(
+                    id = item.optString("id"),
+                    text = item.optString("text"),
+                    isChecked = item.optBoolean("is_checked"),
+                    position = item.optLong("position"),
+                    createdAt = item.optString("created_at"),
+                    updatedAt = item.optString("updated_at"),
+                ),
+            )
+        }
+
+        return HabitatList(
+            id = data.optString("id"),
+            title = data.optString("title"),
+            owner = MessagePerson(
+                id = ownerData.optString("id"),
+                email = ownerData.optString("email"),
+                displayName = ownerData.optString("display_name"),
+            ),
+            isOwner = data.optBoolean("is_owner"),
+            canEdit = data.optBoolean("can_edit"),
+            permission = data.optString("permission"),
+            itemsTotal = data.optInt("items_total", items.size),
+            itemsChecked = data.optInt("items_checked"),
+            recipientsCount = data.optInt("recipients_count"),
+            items = items,
+            recipients = parseListRecipients(data.optJSONArray("recipients") ?: JSONArray()),
+            createdAt = data.optString("created_at"),
+            updatedAt = data.optString("updated_at"),
+        )
+    }
+
+    private fun parseListRecipients(items: JSONArray): List<ListRecipient> {
+        val list = ArrayList<ListRecipient>(items.length())
+        for (i in 0 until items.length()) {
+            val item = items.optJSONObject(i) ?: continue
+            list.add(
+                ListRecipient(
+                    userId = item.optString("user_id"),
+                    email = item.optString("email"),
+                    displayName = item.optString("display_name"),
+                    permission = item.optString("permission"),
+                    grantedAt = item.optString("granted_at"),
+                ),
+            )
+        }
+        return list
     }
 
     private fun nullableString(data: JSONObject, key: String): String? {
